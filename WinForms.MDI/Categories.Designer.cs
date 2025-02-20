@@ -1,6 +1,6 @@
 ﻿namespace POS
 {
-    partial class Form1
+    partial class frmCategories
     {
         /// <summary>
         ///  Required designer variable.
@@ -73,6 +73,7 @@
             // 
             // groupBox1
             // 
+            groupBox1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             groupBox1.Controls.Add(lsvProducts);
             groupBox1.Controls.Add(txtTotal);
             groupBox1.Controls.Add(txtQuantity);
@@ -93,6 +94,7 @@
             // 
             // lsvProducts
             // 
+            lsvProducts.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             lsvProducts.Location = new Point(6, 110);
             lsvProducts.Name = "lsvProducts";
             lsvProducts.Size = new Size(574, 296);
@@ -113,7 +115,7 @@
             txtQuantity.Location = new Point(346, 62);
             txtQuantity.Name = "txtQuantity";
             txtQuantity.Size = new Size(85, 27);
-            txtQuantity.TabIndex = 8;
+            txtQuantity.TabIndex = 9;
             txtQuantity.TextChanged += txtQuantity_TextChanged;
             // 
             // txtUnitPrice
@@ -188,7 +190,8 @@
             // lblNetPrice
             // 
             lblNetPrice.BackColor = Color.Blue;
-            lblNetPrice.Font = new Font("Showcard Gothic", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblNetPrice.Font = new Font("Showcard Gothic", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblNetPrice.ForeColor = Color.Red;
             lblNetPrice.Location = new Point(671, 35);
             lblNetPrice.Name = "lblNetPrice";
             lblNetPrice.Size = new Size(242, 39);
@@ -222,49 +225,54 @@
             // 
             // btnAdd
             // 
+            btnAdd.BackColor = Color.Lime;
             btnAdd.Location = new Point(671, 96);
             btnAdd.Name = "btnAdd";
             btnAdd.Size = new Size(94, 29);
             btnAdd.TabIndex = 8;
             btnAdd.Text = "เพิ่ม";
-            btnAdd.UseVisualStyleBackColor = true;
+            btnAdd.UseVisualStyleBackColor = false;
             btnAdd.Click += btnAdd_Click;
             // 
             // btnClear
             // 
+            btnClear.BackColor = Color.FromArgb(255, 128, 128);
             btnClear.Location = new Point(671, 143);
             btnClear.Name = "btnClear";
             btnClear.Size = new Size(94, 29);
             btnClear.TabIndex = 9;
             btnClear.Text = "clear";
-            btnClear.UseVisualStyleBackColor = true;
+            btnClear.UseVisualStyleBackColor = false;
             btnClear.Click += btnClear_Click;
             // 
             // btnSave
             // 
+            btnSave.BackColor = Color.Yellow;
             btnSave.Enabled = false;
             btnSave.Location = new Point(671, 211);
             btnSave.Name = "btnSave";
             btnSave.Size = new Size(94, 29);
             btnSave.TabIndex = 10;
             btnSave.Text = "บันทึก";
-            btnSave.UseVisualStyleBackColor = true;
+            btnSave.UseVisualStyleBackColor = false;
             btnSave.Click += btnSave_Click;
             // 
             // btnCancel
             // 
+            btnCancel.BackColor = Color.FromArgb(128, 128, 255);
             btnCancel.Location = new Point(671, 271);
             btnCancel.Name = "btnCancel";
             btnCancel.Size = new Size(151, 29);
             btnCancel.TabIndex = 11;
             btnCancel.Text = "ยกเลิกรายการสังซื้อ\r\n";
-            btnCancel.UseVisualStyleBackColor = true;
+            btnCancel.UseVisualStyleBackColor = false;
             btnCancel.Click += btnCancel_Click;
             // 
-            // Form1
+            // frmCategories
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
+            BackColor = SystemColors.ActiveCaption;
             ClientSize = new Size(937, 505);
             Controls.Add(btnCancel);
             Controls.Add(btnSave);
@@ -277,8 +285,9 @@
             Controls.Add(groupBox1);
             Controls.Add(label3);
             Controls.Add(label1);
-            Name = "Form1";
+            Name = "frmCategories";
             Text = "จำหน่ายสินค้า";
+            WindowState = FormWindowState.Maximized;
             Load += Form1_Load;
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();

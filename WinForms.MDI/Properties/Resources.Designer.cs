@@ -59,5 +59,25 @@ namespace WinForms.MDI.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap istockphoto_1474027520_612x612 {
+            get {
+                object obj = ResourceManager.GetObject("istockphoto-1474027520-612x612", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap pngtree_fruit_store_supermarket_png_image_5401364 {
+            get {
+                object obj = ResourceManager.GetObject("pngtree-fruit-store-supermarket-png-image_5401364", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
     }
 }

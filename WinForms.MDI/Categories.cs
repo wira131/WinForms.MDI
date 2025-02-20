@@ -4,9 +4,9 @@ using System.Data;
 
 namespace POS
 {
-    public partial class Form1 : Form
+    public partial class frmCategories : Form
     {
-        public Form1()
+        public frmCategories()
         {
             InitializeComponent();
         }
@@ -14,7 +14,7 @@ namespace POS
         SqlConnection conn;
         SqlTransaction tr;
 
-       
+
         private void ListViewFormat() // สำหรับจัดรูปแบบ ListView
         {
             lsvProducts.Columns.Add("รหัสสินค้า", 100, HorizontalAlignment.Left);
@@ -27,7 +27,7 @@ namespace POS
             lsvProducts.FullRowSelect = true;
         }
 
-        private void ClearProductData() //เอําไวเ้คลยี รข์ อ้มลู สนค ้ําใน ิ Textbox
+        private void ClearProductData() 
         {
             txtProductID.Text = "";
             txtProductName.Text = "";
@@ -36,20 +36,20 @@ namespace POS
             txtTotal.Text = "0";
         }
 
-        private void clearEmployeeData() //ส ําหรับเคลยี รข์ อ้มลู ใน textbox พนักงํานขําย
+        private void clearEmployeeData() 
         {
             txtEmployeeID.Text = "";
             txtEmployeeName.Text = "";
         }
 
-        private void CalculateTotal() //เอําไว้ค ํานวณรําคํารวม ของรํายกํารแต่ละบรรทัด
+        private void CalculateTotal() 
         {
             double total = Convert.ToDouble(txtUnitPrice.Text) * Convert.ToDouble(txtQuantity.Text);
             txtTotal.Text = total.ToString("#,##0.00");
             txtProductID.Focus();
         }
 
-        private void CalulateNetPrice() //เอําไว้ค ํานวณรําคํารวมทั้งหมด
+        private void CalulateNetPrice() 
         {
             int i = 0;
             double tmpNetPrice = 0.0;
@@ -72,7 +72,7 @@ namespace POS
                 {
                     conn.Open();
                 }
-                
+
                 SqlDataReader dr = comm.ExecuteReader();
                 if (dr.HasRows)
                 {
@@ -106,7 +106,7 @@ namespace POS
                 {
                     conn.Open();
                 }
-                
+
                 SqlDataReader dr = comm.ExecuteReader();
                 if (dr.HasRows)
                 {
@@ -114,7 +114,7 @@ namespace POS
                     dt.Load(dr);
                     txtProductID.Text = dt.Rows[0][0].ToString();
                     txtProductName.Text = dt.Rows[0][1].ToString();
-                    txtUnitPrice.Text = dt.Rows[0][2].ToString();
+                    txtUnitPrice.Text = Convert.ToDouble(dt.Rows[0][2]).ToString("0.00");
                     CalculateTotal();
                     txtProductID.Focus();
                 }
@@ -167,7 +167,7 @@ namespace POS
             }
             string[] anyData;
             anyData = new string[] { txtProductID.Text, txtProductName.Text,
-            txtUnitPrice.Text, txtQuantity.Text, txtTotal.Text };
+            Convert.ToDouble(txtUnitPrice.Text).ToString("0.00"), txtQuantity.Text, txtTotal.Text };
             lvi = new ListViewItem(anyData);
             lsvProducts.Items.Add(lvi);
             CalulateNetPrice(); ClearProductData(); btnSave.Enabled = true;
@@ -194,24 +194,24 @@ namespace POS
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            lsvProducts.Clear(); //เคลยี รร์ ํายกํารสนิคํา้ในหนํา้จอ
-            clearEmployeeData(); //เคลยี รร์ ํายชอื่ พนักงํานขําย (อนั นี้ถํา้มกี ําร Login มําก่อนจะไม่ต ้องเคลียร์)
-            ClearProductData(); //เคลยี รร์ ํายชอื่ สนิคํา้ในรํายกํารคน้หําสนิคํา้
-            ListViewFormat(); //จัดรูปแบบ ListView อีกครั้ง
-            lblNetPrice.Text = "0.00"; //ปรับรําคํารวมให ้เป็น 0 อีกครั้ง
-            txtEmployeeID.Focus(); //น ํา Cursor ไปวํางที่ รหัสพนักงําน
+            lsvProducts.Clear(); 
+            clearEmployeeData(); 
+            ClearProductData(); 
+            ListViewFormat(); 
+            lblNetPrice.Text = "0.00"; 
+            txtEmployeeID.Focus(); 
         }
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            int lastOrderID = 0; //จะเอําไว้เก็บรหัสที่ใหม่ที่สุดตอนที่ insert order แล ้ว
+            int lastOrderID = 0; 
             if (txtEmployeeID.Text.Trim() == "")
             {
                 MessageBox.Show("โปรดระบุผู้ขายสินค้าก่อน", "มีข้อผิดพลาด");
                 txtEmployeeID.Focus();
                 return;
             }
-            if (lsvProducts.Items.Count > 0) //ตรวจสอบวํา่ เลอื กสนิคํา้ไวห้ รอื ยัง
+            if (lsvProducts.Items.Count > 0) 
             {
                 if (MessageBox.Show("ต้องการบันทึกรายการสินค้าหรือไม่", "กรุณายืนยัน", MessageBoxButtons.YesNo)
                 == DialogResult.Yes)
@@ -226,7 +226,7 @@ namespace POS
                     comm.Parameters.AddWithValue("@EmployeeID", txtEmployeeID.Text.Trim());
                     comm.Parameters.AddWithValue("@TotalCash", lblNetPrice.Text);
                     comm.ExecuteNonQuery();
-                    //อ่ําน OrderID ลํา่ สดุ ใสไ่ วใ้นตัวแปร lastOrderID
+                    
                     string sql1 = "select top 1 ReceiptID from Receipts order by ReceiptID desc";
                     SqlCommand comm1 = new SqlCommand(sql1, conn, tr);
                     SqlDataReader dr = comm1.ExecuteReader();
@@ -236,7 +236,7 @@ namespace POS
                         lastOrderID = dr.GetInt32(dr.GetOrdinal("ReceiptID"));
                     }
                     dr.Close();
-                    //เพมิ่ ขอ้มลู รํายกํารสนิคํา้ OrderDetail ที่ตรงกับ lastOrderID
+                    
                     for (int i = 0; i <= lsvProducts.Items.Count - 1; i++)
                     {
                         string sql2 = "insert into Details(ReceiptID,ProductID,UnitPrice,Quantity)"
@@ -244,7 +244,8 @@ namespace POS
                         SqlCommand comm3 = new SqlCommand(sql2, conn, tr);
                         comm3.Parameters.AddWithValue("@ReceiptID", lastOrderID);
                         comm3.Parameters.AddWithValue("@ProductID", lsvProducts.Items[i].SubItems[0].Text);
-                        comm3.Parameters.AddWithValue("@UnitPrice", lsvProducts.Items[i].SubItems[2].Text);
+                        comm3.Parameters.AddWithValue("@UnitPrice", Convert.ToDouble(lsvProducts.Items[i].SubItems[2].Text).ToString("0.00"));
+
                         comm3.Parameters.AddWithValue("@Quantity", lsvProducts.Items[i].SubItems[3].Text);
                         comm3.ExecuteNonQuery();
                     }
@@ -263,4 +264,5 @@ namespace POS
             ClearProductData();
         }
     }
+    
 }
