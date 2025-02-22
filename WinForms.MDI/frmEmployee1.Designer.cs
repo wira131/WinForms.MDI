@@ -40,9 +40,8 @@
             // 
             txtName.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             txtName.Location = new Point(143, 400);
-            txtName.Multiline = true;
             txtName.Name = "txtName";
-            txtName.Size = new Size(297, 36);
+            txtName.Size = new Size(297, 34);
             txtName.TabIndex = 7;
             // 
             // btnDelcet
@@ -80,11 +79,15 @@
             // 
             // dgvEmployees
             // 
+            dgvEmployees.AllowUserToAddRows = false;
+            dgvEmployees.AllowUserToDeleteRows = false;
             dgvEmployees.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvEmployees.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvEmployees.Location = new Point(12, 20);
             dgvEmployees.Name = "dgvEmployees";
+            dgvEmployees.ReadOnly = true;
             dgvEmployees.RowHeadersWidth = 51;
+            dgvEmployees.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvEmployees.Size = new Size(776, 337);
             dgvEmployees.TabIndex = 3;
             dgvEmployees.CellDoubleClick += dgvEmployees_CellDoubleClick;

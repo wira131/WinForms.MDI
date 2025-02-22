@@ -1,6 +1,6 @@
 ﻿namespace WinFormMiniMart
 {
-    partial class frmMinimat
+    partial class frmMinima
     {
         /// <summary>
         ///  Required designer variable.
@@ -166,10 +166,11 @@
             btnAdd.UseVisualStyleBackColor = false;
             btnAdd.Click += btnAdd_Click;
             // 
-            // frmMinimat
+            // frmMinima
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
+            BackColor = SystemColors.ActiveCaption;
             ClientSize = new Size(957, 645);
             Controls.Add(btnAdd);
             Controls.Add(btnClearForm);
@@ -183,7 +184,7 @@
             Controls.Add(label2);
             Controls.Add(label1);
             Controls.Add(dgvCategories);
-            Name = "frmMinimat";
+            Name = "frmMinima";
             Text = "จัดการข้อมูลหมวดหมูสินค้า";
             WindowState = FormWindowState.Maximized;
             ((System.ComponentModel.ISupportInitialize)dgvCategories).EndInit();

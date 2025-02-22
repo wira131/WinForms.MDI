@@ -30,7 +30,15 @@ namespace WinForms.MDI
             da = new SqlDataAdapter(cmd);
             DataSet dataSet = new DataSet();
             da.Fill(dataSet);
-            dgvProducts.DataSource = dataSet.Tables[0];  // แสดงข้อมูลใน DataGridView
+
+            // แปลง UnitPrice ให้เป็นทศนิยม 2 ตำแหน่ง
+            foreach (DataRow row in dataSet.Tables[0].Rows)
+            {
+                decimal unitPrice = Convert.ToDecimal(row["UnitPrice"]);
+                row["UnitPrice"] = unitPrice.ToString("F2"); // รูปแบบเป็น 2 ตำแหน่งทศนิยม
+            }
+
+            dgvProducts.DataSource = dataSet.Tables[0];
         }
 
         private void txtName_TextChanged(object sender, EventArgs e)
@@ -69,14 +77,14 @@ namespace WinForms.MDI
             Form4 f = new Form4();
             f.status = "update";
             var dgv = dgvProducts.CurrentRow.Cells;
-            f.ProductID = dgv["ProductID"].Value.ToString();  // ใช้ ProductID เป็น string
+            f.ProductID = dgv["ProductID"].Value.ToString();
             f.ProductName = dgv["ProductName"].Value.ToString();
             f.UnitPrice = Convert.ToDecimal(dgv["UnitPrice"].Value);
             f.UnitsInStock = Convert.ToInt32(dgv["UnitsInStock"].Value);
             f.CategoryID = Convert.ToInt32(dgv["CategoryID"].Value);
             f.Discontinued = Convert.ToBoolean(dgv["Discontinued"].Value);
             f.ShowDialog();
-            showdata();  // รีเฟรชข้อมูล
+            showdata();
         }
 
         private void btnClaer_Click(object sender, EventArgs e)

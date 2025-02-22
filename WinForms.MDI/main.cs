@@ -55,7 +55,7 @@ namespace WinFormMiniMart
 
         private void สนคToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            OpenChildForm<frmMinimat>();
+            OpenChildForm<frmMinima>();
             //frmCategories frm = new frmCategories();
             //frm.MdiParent = this;
             //frm.Show();
@@ -87,7 +87,7 @@ namespace WinFormMiniMart
             }
             else if (f.Position == "Sale Representative")
             {
-                
+
                 showHideMenu(false, false, true);
             }
             else if (f.Position == "Admin")

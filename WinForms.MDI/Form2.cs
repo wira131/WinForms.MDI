@@ -43,23 +43,24 @@ namespace WinForms.MDI
             txtPassword.Text = Password;
             this.Text += "(" + status + ")";
             txtFirstName.Focus();
+
+
         }
         private void UpdateEmployees()
         {
 
-
-            if (string.IsNullOrEmpty(txtEmployeeID.Text))
-            {
+            if(string.IsNullOrEmpty(txtEmployeeID.Text))
+    {
                 MessageBox.Show("กรุณาเลือกข้อมูลก่อน");
                 return;
             }
             if (string.IsNullOrEmpty(txtFirstName.Text))
             {
-                MessageBox.Show("ชื่อประเภทสินค้าต้องว่าง");
+                MessageBox.Show("ชื่อพนักงานต้องไม่ว่าง");
                 return;
             }
 
-            string sql = "Update Employees set Title = @Title, FirstName = @FirstName, LastName = @LastName, Position = @Position, UserName = @UserName, Password = @Password where EmployeeID = @EmployeeID";
+            string sql = "UPDATE Employees SET Title = @Title, FirstName = @FirstName, LastName = @LastName, Position = @Position, UserName = @UserName, Password = @Password WHERE EmployeeID = @EmployeeID";
             cmd = new SqlCommand(sql, conn);
             cmd.Parameters.AddWithValue("@EmployeeID", txtEmployeeID.Text.Trim());
             cmd.Parameters.AddWithValue("@Title", cmbTitle.Text.Trim());
@@ -69,8 +70,12 @@ namespace WinForms.MDI
             cmd.Parameters.AddWithValue("@UserName", txtUserName.Text.Trim());
             cmd.Parameters.AddWithValue("@Password", txtPassword.Text.Trim());
             cmd.ExecuteNonQuery();
+
+            // ✅ แจ้งเตือนเมื่อบอัพเดต
+            MessageBox.Show($"อัพเดตข้อมูลผู้ใช้ {txtUserName.Text} สำเร็จแล้ว", "อัพเดตสำเร็จ", MessageBoxButtons.OK, MessageBoxIcon.Information);
             this.Close();
         }
+
         private void insertEmployees()
         {
             if (string.IsNullOrEmpty(txtFirstName.Text))
@@ -79,46 +84,48 @@ namespace WinForms.MDI
                 return;
             }
 
+            string sql = "INSERT INTO Employees (Title, FirstName, LastName, Position, UserName, Password) " +
+                         "VALUES (@Title, @FirstName, @LastName, @Position, @UserName, @Password)";
+
             try
             {
-                string sql = "INSERT INTO Employees (Title, FirstName, LastName, Position, UserName, Password) " +
-                             "VALUES (@Title, @FirstName, @LastName, @Position, @UserName, @Password)";
-
-                using (cmd = new SqlCommand(sql, conn))
+                using (SqlConnection conn = connectDB.ConnectMiniMart())
                 {
-                    cmd.Parameters.AddWithValue("@Title", cmbTitle.Text.Trim());
-                    cmd.Parameters.AddWithValue("@FirstName", txtFirstName.Text.Trim());
-                    cmd.Parameters.AddWithValue("@LastName", txtLastName.Text.Trim());
-                    cmd.Parameters.AddWithValue("@Position", cboPosition.Text.Trim());
-                    cmd.Parameters.AddWithValue("@UserName", txtUserName.Text.Trim());
-                    cmd.Parameters.AddWithValue("@Password", txtPassword.Text.Trim());
-
                     if (conn.State != ConnectionState.Open)
                     {
                         conn.Open();
                     }
 
-                    int rowsAffected = cmd.ExecuteNonQuery();
-                    if (rowsAffected > 0)
+                    using (SqlCommand cmd = new SqlCommand(sql, conn))
                     {
-                        MessageBox.Show("เพิ่มข้อมูลพนักงานเรียบร้อย");
-                    }
-                    else
-                    {
-                        MessageBox.Show("เกิดข้อผิดพลาดในการเพิ่มข้อมูล");
+                        cmd.Parameters.AddWithValue("@Title", cmbTitle.Text.Trim());
+                        cmd.Parameters.AddWithValue("@FirstName", txtFirstName.Text.Trim());
+                        cmd.Parameters.AddWithValue("@LastName", txtLastName.Text.Trim());
+                        cmd.Parameters.AddWithValue("@Position", cboPosition.Text.Trim());
+                        cmd.Parameters.AddWithValue("@UserName", txtUserName.Text.Trim());
+                        cmd.Parameters.AddWithValue("@Password", txtPassword.Text.Trim());
+
+
+
+                        int rowsAffected = cmd.ExecuteNonQuery();
+                        if (rowsAffected > 0)
+                        {
+                            MessageBox.Show("เพิ่มข้อมูลพนักงานเรียบร้อย", "สำเร็จ", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }
+                        else
+                        {
+                            MessageBox.Show("เกิดข้อผิดพลาดในการเพิ่มข้อมูล", "ข้อผิดพลาด", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
                     }
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("เกิดข้อผิดพลาด: " + ex.Message);
-            }
-            finally
-            {
-                conn.Close(); // ปิดการเชื่อมต่อ
+                MessageBox.Show("เกิดข้อผิดพลาด: " + ex.Message, "ข้อผิดพลาด", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
             this.Close();
+
         }
 
 

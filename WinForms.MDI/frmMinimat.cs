@@ -1,29 +1,35 @@
-using Microsoft.Data.SqlClient;
+﻿using Microsoft.Data.SqlClient;
 using POS;
 using System.Data;
 using WinForms.MDI;
 
+
 namespace WinFormMiniMart
 {
-    public partial class frmMinimat : Form
+    public partial class frmMinima : Form
     {
-        public frmMinimat()
+        public frmMinima()
         {
             InitializeComponent();
             this.Load += FrmCategories_Load;
             dgvCategories.CellMouseUp += DgvCategories_CellMouseUp;
+            
         }
+       
 
         private void DgvCategories_CellMouseUp(object? sender, DataGridViewCellMouseEventArgs e)
         {
-            txtCategoryID.Text = dgvCategories.CurrentRow.Cells["CategoryID"].Value.ToString();
-            txtCategoryName.Text = dgvCategories.CurrentRow.Cells["CategoryName"].Value.ToString();
-            txtDescription.Text = dgvCategories.CurrentRow.Cells["Description"].Value.ToString();
+            if (dgvCategories.CurrentRow != null)
+            {
+                txtCategoryID.Text = dgvCategories.CurrentRow.Cells["CategoryID"].Value?.ToString();
+                txtCategoryName.Text = dgvCategories.CurrentRow.Cells["CategoryName"].Value?.ToString();
+                txtDescription.Text = dgvCategories.CurrentRow.Cells["Description"].Value?.ToString();
+            }
         }
 
         SqlConnection conn;
         SqlDataAdapter da;
-        SqlCommand cmd;
+        SqlCommand com;
 
         private void FrmCategories_Load(object? sender, EventArgs e)
         {
@@ -35,8 +41,8 @@ namespace WinFormMiniMart
         private void showdata()
         {
             string sql = "Select * from Categories";
-            cmd = new SqlCommand(sql, conn);
-            da = new SqlDataAdapter(cmd);
+            com = new SqlCommand(sql, conn);
+            da = new SqlDataAdapter(com);
             DataSet dataSet = new DataSet();
             da.Fill(dataSet);
             dgvCategories.DataSource = dataSet.Tables[0];
@@ -56,16 +62,15 @@ namespace WinFormMiniMart
 
             if (string.IsNullOrEmpty(txtCategoryName.Text))
             {
-                MessageBox.Show("���ͻ������Թ��ҵ�ͧ��ҧ");
+                MessageBox.Show("กรุณากรอกชื่อหมวดหมู่", "แจ้งเตือน");
                 return;
             }
 
-            string sql = "Insert into Categories values (@categroyName,@Description)";
-            cmd = new SqlCommand(sql, conn);
-            cmd.Parameters.AddWithValue("@categroyName", txtCategoryName.Text.Trim());
-            cmd.Parameters.AddWithValue("@Description", txtDescription.Text.Trim());
-
-            if (cmd.ExecuteNonQuery() > 0)
+            string sql = "Insert into Categories values(@categoryName, @Description)";
+            com = new SqlCommand(sql, conn);
+            com.Parameters.AddWithValue("@categoryName", txtCategoryName.Text.Trim());
+            com.Parameters.AddWithValue("@Description", txtDescription.Text.Trim());
+            if (com.ExecuteNonQuery() > 0)
             {
                 showdata();
                 btnClearForm.PerformClick();
@@ -76,23 +81,23 @@ namespace WinFormMiniMart
         {
             if (string.IsNullOrEmpty(txtCategoryID.Text))
             {
-                MessageBox.Show("��س����͡�����š�͹");
+                MessageBox.Show("กรุณาเลือกหมวดหมู่ที่ต้องการแก้ไข", "แจ้งเตือน");
                 return;
             }
             if (string.IsNullOrEmpty(txtCategoryName.Text))
             {
-                MessageBox.Show("���ͻ������Թ��ҵ�ͧ��ҧ");
+                MessageBox.Show("กรุณากรอกชื่อหมวดหมู่", "แจ้งเตือน");
                 return;
             }
 
-            string sql = "Update Categories set CategoryName = @categroyName, Description = @Description where CategoryID = @categoryID";
-            cmd = new SqlCommand(sql, conn);
-            cmd.Parameters.AddWithValue("@categoryID", txtCategoryID.Text.Trim());
-            cmd.Parameters.AddWithValue("@categroyName", txtCategoryName.Text.Trim());
-            cmd.Parameters.AddWithValue("@Description", txtDescription.Text.Trim());
-
-
-            if (cmd.ExecuteNonQuery() > 0)
+            string sql = "Update Categories set CategoryName = @categoryName,"
+                                             + " description = @Description "
+                                             + " where CategoryID = @categoryID";
+            com = new SqlCommand(sql, conn);
+            com.Parameters.AddWithValue("@categoryName", txtCategoryName.Text.Trim());
+            com.Parameters.AddWithValue("@Description", txtDescription.Text.Trim());
+            com.Parameters.AddWithValue("@categoryID", txtCategoryID.Text);
+            if (com.ExecuteNonQuery() > 0)
             {
                 showdata();
                 btnClearForm.PerformClick();
@@ -103,20 +108,21 @@ namespace WinFormMiniMart
         {
             if (string.IsNullOrEmpty(txtCategoryID.Text))
             {
-                MessageBox.Show("��س����͡�����š�͹");
+                MessageBox.Show("กรุณาเลือกหมวดหมู่ที่ต้องการลบ", "แจ้งเตือน");
                 return;
             }
-            if (MessageBox.Show("��ͧ���ź�����Ź���������", "�ô�׹�ѹ", MessageBoxButtons.YesNo) == DialogResult.No)
+
+            if (MessageBox.Show("คุณแน่ใจหรือไม่ว่าต้องการลบหมวดหมู่นี้?", "ยืนยันการลบ", MessageBoxButtons.YesNo) == DialogResult.No)
             {
                 return;
             }
 
             string sql = "delete from Categories where CategoryID = @categoryID";
-            cmd = new SqlCommand(sql, conn);
-            cmd.Parameters.AddWithValue("@categoryID", txtCategoryID.Text.Trim());
+            com = new SqlCommand(sql, conn);
+            com.Parameters.AddWithValue("@categoryID", txtCategoryID.Text);
             try
             {
-                if (cmd.ExecuteNonQuery() > 0)
+                if (com.ExecuteNonQuery() > 0)
                 {
                     showdata();
                     btnClearForm.PerformClick();
@@ -124,8 +130,7 @@ namespace WinFormMiniMart
             }
             catch (Exception ex)
             {
-
-                MessageBox.Show("�Դ��ͼԴ��Ҵ :" + Environment.NewLine + ex.Message, "�������öź��������");
+                MessageBox.Show("เกิดข้อผิดพลาดในการลบข้อมูล:\n" + Environment.NewLine + ex.Message, "ข้อผิดพลาด");
             }
         }
 
@@ -147,7 +152,7 @@ namespace WinFormMiniMart
             f.categoryID = Convert.ToInt16(dgv["categoryID"].Value);
             f.categoryName = dgv["categoryName"].Value.ToString();
             f.description = dgv["description"].Value.ToString();
-            f.ShowDialog();
+            f.ShowDialog();            
             showdata();
         }
     }

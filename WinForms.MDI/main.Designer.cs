@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             menuStrip1 = new MenuStrip();
-            จดการToolStripMenuItem = new ToolStripMenuItem();
+            mun_Product = new ToolStripMenuItem();
             mnu_Employees = new ToolStripMenuItem();
             mnu_Products = new ToolStripMenuItem();
             mnu_Categories = new ToolStripMenuItem();
@@ -49,39 +49,39 @@
             // 
             menuStrip1.BackColor = Color.FromArgb(255, 255, 128);
             menuStrip1.ImageScalingSize = new Size(20, 20);
-            menuStrip1.Items.AddRange(new ToolStripItem[] { จดการToolStripMenuItem, mnu_logout2 });
+            menuStrip1.Items.AddRange(new ToolStripItem[] { mun_Product, mnu_logout2 });
             menuStrip1.Location = new Point(0, 56);
             menuStrip1.Name = "menuStrip1";
             menuStrip1.Size = new Size(800, 28);
             menuStrip1.TabIndex = 0;
             menuStrip1.Text = "menuStrip1";
             // 
-            // จดการToolStripMenuItem
+            // mun_Product
             // 
-            จดการToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { mnu_Employees, mnu_Products, mnu_Categories });
-            จดการToolStripMenuItem.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            จดการToolStripMenuItem.Name = "จดการToolStripMenuItem";
-            จดการToolStripMenuItem.Size = new Size(67, 24);
-            จดการToolStripMenuItem.Text = "จัดการ";
+            mun_Product.DropDownItems.AddRange(new ToolStripItem[] { mnu_Employees, mnu_Products, mnu_Categories });
+            mun_Product.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            mun_Product.Name = "mun_Product";
+            mun_Product.Size = new Size(67, 24);
+            mun_Product.Text = "จัดการ";
             // 
             // mnu_Employees
             // 
             mnu_Employees.Name = "mnu_Employees";
-            mnu_Employees.Size = new Size(222, 26);
+            mnu_Employees.Size = new Size(224, 26);
             mnu_Employees.Text = "จัดการพนักงาน";
             mnu_Employees.Click += จดการToolStripMenuItem1_Click;
             // 
             // mnu_Products
             // 
             mnu_Products.Name = "mnu_Products";
-            mnu_Products.Size = new Size(222, 26);
+            mnu_Products.Size = new Size(224, 26);
             mnu_Products.Text = "จัดการสินค้า";
             mnu_Products.Click += พนกงานToolStripMenuItem_Click;
             // 
             // mnu_Categories
             // 
             mnu_Categories.Name = "mnu_Categories";
-            mnu_Categories.Size = new Size(222, 26);
+            mnu_Categories.Size = new Size(224, 26);
             mnu_Categories.Text = "จัดการประเภทสินค้า";
             mnu_Categories.Click += สนคToolStripMenuItem_Click;
             // 
@@ -154,6 +154,7 @@
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
+            BackColor = Color.White;
             ClientSize = new Size(800, 450);
             Controls.Add(menuStrip1);
             Controls.Add(menuStrip2);
@@ -179,7 +180,7 @@
         #endregion
 
         private MenuStrip menuStrip1;
-        private ToolStripMenuItem จดการToolStripMenuItem;
+        private ToolStripMenuItem mun_Product;
         private ToolStripMenuItem mnu_Employees;
         private ToolStripMenuItem mnu_Products;
         private ToolStripMenuItem mnu_Categories;

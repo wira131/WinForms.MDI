@@ -11,7 +11,7 @@ namespace POS
             InitializeComponent();
         }
 
-        SqlConnection conn;
+        SqlConnection conn;     
         SqlTransaction tr;
 
 
@@ -156,7 +156,7 @@ namespace POS
                     int qty = Convert.ToInt16(lsvProducts.Items[i].SubItems[3].Text)
                     + Convert.ToInt16(txtQuantity.Text);
                     double newTotal = Convert.ToDouble(lsvProducts.Items[i].SubItems[4].Text)
-                    + Convert.ToDouble(txtTotal.Text); //**
+                    + Convert.ToDouble(txtTotal.Text); 
                     lsvProducts.Items[i].SubItems[3].Text = qty.ToString();
                     lsvProducts.Items[i].SubItems[4].Text = newTotal.ToString("#,##0.00");
                     ClearProductData();
@@ -204,30 +204,63 @@ namespace POS
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            int lastOrderID = 0; 
+            int lastOrderID = 0;
             if (txtEmployeeID.Text.Trim() == "")
             {
                 MessageBox.Show("โปรดระบุผู้ขายสินค้าก่อน", "มีข้อผิดพลาด");
                 txtEmployeeID.Focus();
                 return;
             }
-            if (lsvProducts.Items.Count > 0) 
+            if (lsvProducts.Items.Count > 0)
             {
-                if (MessageBox.Show("ต้องการบันทึกรายการสินค้าหรือไม่", "กรุณายืนยัน", MessageBoxButtons.YesNo)
-                == DialogResult.Yes)
+                // ตรวจสอบสินค้าที่หมดสต็อก
+                List<string> outOfStockProducts = new List<string>();
+                foreach (ListViewItem item in lsvProducts.Items)
                 {
-                    //ประกําศเริ่ม Transaction
+                    string productId = item.SubItems[0].Text;
+                    string productName = item.SubItems[1].Text;
 
+                    string sqlCheckStock = "SELECT UnitsInStock, Discontinued FROM Products WHERE ProductID = @ProductID";
+                    using (SqlCommand cmdCheck = new SqlCommand(sqlCheckStock, conn))
+                    {
+                        conn.Open();
+                        cmdCheck.Parameters.AddWithValue("@ProductID", productId);
+                        SqlDataReader reader = cmdCheck.ExecuteReader();
+                        if (reader.Read())
+                        {
+                            int unitsInStock = reader.GetInt32(reader.GetOrdinal("UnitsInStock"));
+                            bool discontinued = reader.GetBoolean(reader.GetOrdinal("Discontinued"));
+
+                            if (unitsInStock <= 0 || discontinued)
+                            {
+                                outOfStockProducts.Add(productName);
+                            }
+                        }
+                        reader.Close();
+                        conn.Close();
+                    }
+                }
+
+                if (outOfStockProducts.Count > 0)
+                {
+                    MessageBox.Show("สินค้าต่อไปนี้หมดสต็อก:\n" + string.Join("\n", outOfStockProducts),
+                                    "แจ้งเตือน", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                if (MessageBox.Show("ต้องการบันทึกรายการสินค้าหรือไม่", "กรุณายืนยัน", MessageBoxButtons.YesNo)
+                    == DialogResult.Yes)
+                {
+                    // ประกาศเริ่ม Transaction
                     conn.Open();
                     tr = conn.BeginTransaction();
-                    string sql = "insert into Receipts(ReceiptDate,EmployeeID,TotalCash)"
-                    + " values (getdate(),@EmployeeID,@TotalCash)";
+                    string sql = "INSERT INTO Receipts(ReceiptDate,EmployeeID,TotalCash) VALUES (GETDATE(),@EmployeeID,@TotalCash)";
                     SqlCommand comm = new SqlCommand(sql, conn, tr);
                     comm.Parameters.AddWithValue("@EmployeeID", txtEmployeeID.Text.Trim());
                     comm.Parameters.AddWithValue("@TotalCash", lblNetPrice.Text);
                     comm.ExecuteNonQuery();
-                    
-                    string sql1 = "select top 1 ReceiptID from Receipts order by ReceiptID desc";
+
+                    string sql1 = "SELECT TOP 1 ReceiptID FROM Receipts ORDER BY ReceiptID DESC";
                     SqlCommand comm1 = new SqlCommand(sql1, conn, tr);
                     SqlDataReader dr = comm1.ExecuteReader();
                     if (dr.HasRows)
@@ -236,32 +269,36 @@ namespace POS
                         lastOrderID = dr.GetInt32(dr.GetOrdinal("ReceiptID"));
                     }
                     dr.Close();
-                    
+
                     for (int i = 0; i <= lsvProducts.Items.Count - 1; i++)
                     {
-                        string sql2 = "insert into Details(ReceiptID,ProductID,UnitPrice,Quantity)"
-                        + " values(@ReceiptID,@ProductID,@UnitPrice,@Quantity)";
+                        string sql2 = "INSERT INTO Details(ReceiptID,ProductID,UnitPrice,Quantity) " +
+                                      "VALUES(@ReceiptID,@ProductID,@UnitPrice,@Quantity)";
                         SqlCommand comm3 = new SqlCommand(sql2, conn, tr);
                         comm3.Parameters.AddWithValue("@ReceiptID", lastOrderID);
                         comm3.Parameters.AddWithValue("@ProductID", lsvProducts.Items[i].SubItems[0].Text);
                         comm3.Parameters.AddWithValue("@UnitPrice", Convert.ToDouble(lsvProducts.Items[i].SubItems[2].Text).ToString("0.00"));
-
+                        
                         comm3.Parameters.AddWithValue("@Quantity", lsvProducts.Items[i].SubItems[3].Text);
                         comm3.ExecuteNonQuery();
                     }
                     tr.Commit();
                     conn.Close();
                     MessageBox.Show("บันทึกรายการขายเรียบร้อยแล้ว", "ผลการทำงาน");
+                   
                 }
-                btnCancel.PerformClick(); //สั่งใหไ้ปกดป่มุ cancel เคลีย์หน้ําจอทั้งหมดใหม่เพื่อเริ่มรํายกํารใหม่
+                btnCancel.PerformClick();
             }
         }
+        
 
         private void Form1_Load(object sender, EventArgs e)
         {
             conn = connectDB.ConnectMiniMart();
             ListViewFormat();
             ClearProductData();
+
+            
         }
     }
     
